@@ -89,8 +89,13 @@ helm lint ${CHART_PATH}
 echo "=========================================================="
 echo "CHECKING CLUSTER readiness and namespace existence"
 if [ -z "${KUBERNETES_MASTER_ADDRESS}" ]; then
+  echo "=== 01: ${KUBERNETES_MASTER_ADDRESS}"
+  echo "=== 02: ${PIPELINE_KUBERNETES_CLUSTER_ID}"
+  echo "=== 03: ${PIPELINE_KUBERNETES_CLUSTER_NAME}"
   CLUSTER_ID=${PIPELINE_KUBERNETES_CLUSTER_ID:-${PIPELINE_KUBERNETES_CLUSTER_NAME}} # use cluster id instead of cluster name to handle case where there are multiple clusters with same name
+  echo "=== 04: ${CLUSTER_ID}"
   IP_ADDR=$( ibmcloud ks workers --cluster ${CLUSTER_ID} | grep normal | head -n 1 | awk '{ print $2 }' )
+  echo "=== 05: ${IP_ADDR}"
   if [ -z "${IP_ADDR}" ]; then
     echo -e "${PIPELINE_KUBERNETES_CLUSTER_NAME} not created or workers not ready"
     exit 1
