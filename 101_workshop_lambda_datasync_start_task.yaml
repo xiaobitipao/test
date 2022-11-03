@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "DataSync: Start task by Lambda Function"
+Resources:
+  # Role
+  lambdaDataSyncStartTaskIamRole:
+    Type: AWS::IAM::Role
+    DependsOn: lambdaDataSyncStartTaskRolePolicy
+    Properties:
+      RoleName: "workshop-role-lambda-to-datasync-start-task"
+      Description: "Allows Lambda functions to start DataSync task."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  # Inline Policy
+  lambdaDataSyncStartTaskRolePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: workshop-policy-datasync-start-task
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - datasync:DescribeTask
+              - datasync:StartTaskExecution
+            Resource: "arn:aws:datasync:ap-northeast-1:450047772158:task/task-0fdd17fb896da5d97"
+      Roles:
+        - !Ref "lambdaDataSyncStartTaskIamRole"
